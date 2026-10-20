@@ -49,11 +49,11 @@ jobs:
       - name: Verify shared UI before distribution
         run: ./gradlew :shared:jvmTest --console=plain
 
-      - name: Build Debug for iPhone without signing
+      - name: Build Release for iPhone without signing
         id: ios_build
         run: >
           xcodebuild -project iosApp/iosApp.xcodeproj -scheme YunX
-          -configuration Debug -sdk iphoneos
+          -configuration Release -sdk iphoneos
           -destination 'generic/platform=iOS'
           -derivedDataPath iosApp/build-device
           CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
@@ -69,7 +69,7 @@ jobs:
       - name: Verify device application and package IPA
         working-directory: iosApp/build-device
         run: |
-          APP="Build/Products/Debug-iphoneos/YunX.app"
+          APP="Build/Products/Release-iphoneos/YunX.app"
           /usr/libexec/PlistBuddy -c 'Print :CFBundleSupportedPlatforms:0' "$APP/Info.plist" | /usr/bin/grep -x iPhoneOS
           test "$(xcrun lipo -archs "$APP/YunX")" = arm64
           test "$(xcrun lipo -archs "$APP/Frameworks/shared.framework/shared")" = arm64
